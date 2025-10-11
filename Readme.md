@@ -65,3 +65,18 @@ This is a Java project for Attendance System.
 2. Compile:
    ```bash
    javac src/com/school/*.java
+
+
+
+
+## Part 6: Interface-Driven Persistence with Storage
+- Added `Storable` interface with `toDataString()` method.
+- Implemented `Storable` in `Student`, `Course`, and `AttendanceRecord`.
+- Created `FileStorageService` to write data lists to `.txt` files.
+- Demonstrated usage in `Main.java`.
+
+### How to Run
+1. Navigate to project root.
+2. Compile:
+   ```bash
+   javac src/com/school/*.java

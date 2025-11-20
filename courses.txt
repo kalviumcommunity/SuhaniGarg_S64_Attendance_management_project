@@ -1,2 +1,2 @@
-C101,Mathematics
-C102,Science
+101,Mathematics
+102,Science

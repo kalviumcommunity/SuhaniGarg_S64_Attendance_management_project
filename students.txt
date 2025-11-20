@@ -1,3 +1,2 @@
-S001,Alice,10
-S002,Bob,11
-S003,Charlie,12
+1,Alice,Grade 10
+2,Bob,Grade 11

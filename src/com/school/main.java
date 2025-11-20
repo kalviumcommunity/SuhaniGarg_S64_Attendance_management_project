@@ -38,39 +38,53 @@ public class main {
         course1.displayDetails();
         course2.displayDetails();
 
-        // Attendance Log
-        List<AttendanceRecord> attendanceLog = new ArrayList<>();
-
-        // Add attendance records using Student and Course objects
-        attendanceLog.add(new AttendanceRecord(student1, course1, "Present"));
-        attendanceLog.add(new AttendanceRecord(student2, course2, "Absent"));
-        attendanceLog.add(new AttendanceRecord(student1, course2, "Late")); // invalid
-
-        // Display attendance
-        System.out.println("\n=== Attendance Records ===");
-        for (AttendanceRecord record : attendanceLog) {
-            record.displayRecord();
-        }
-
-        // Part 6: Interface-Driven Persistence with Storage
-        System.out.println("\n=== Saving Data to Files ===");
+        // Part 8: Overloaded Commands - AttendanceService
+        System.out.println("\n=== Part 8: Attendance Service with Overloaded Methods ===");
         
-        // Filter students from schoolPeople list using instanceof
-        List<Student> students = new ArrayList<>();
+        // Create FileStorageService and AttendanceService instances
+        FileStorageService fileStorageService = new FileStorageService();
+        AttendanceService attendanceService = new AttendanceService(fileStorageService);
+        
+        // Create lists of all Students and all Courses
+        List<Student> allStudents = new ArrayList<>();
         for (Person person : schoolPeople) {
             if (person instanceof Student) {
-                students.add((Student) person);
+                allStudents.add((Student) person);
             }
         }
         
-        List<Course> courses = new ArrayList<>();
-        courses.add(course1);
-        courses.add(course2);
+        List<Course> allCourses = new ArrayList<>();
+        allCourses.add(course1);
+        allCourses.add(course2);
         
-        // Save data to files using FileStorageService
-        FileStorageService.saveData(students, "students.txt");
-        FileStorageService.saveData(courses, "courses.txt");
-        FileStorageService.saveData(attendanceLog, "attendance_log.txt");
+        // Mark attendance using overloaded methods
+        System.out.println("\n--- Marking Attendance (Method 1: With Objects) ---");
+        attendanceService.markAttendance(student1, course1, "Present");
+        attendanceService.markAttendance(student2, course2, "Absent");
+        
+        System.out.println("\n--- Marking Attendance (Method 2: With IDs) ---");
+        attendanceService.markAttendance(student1.getId(), course2.getCourseId(), "Present", allStudents, allCourses);
+        attendanceService.markAttendance(student2.getId(), course1.getCourseId(), "Late", allStudents, allCourses); // invalid status
+        
+        // Display attendance using overloaded methods
+        System.out.println("\n--- Displaying All Attendance Records ---");
+        attendanceService.displayAttendanceLog();
+        
+        System.out.println("\n--- Displaying Attendance for Specific Student ---");
+        attendanceService.displayAttendanceLog(student1);
+        
+        System.out.println("\n--- Displaying Attendance for Specific Course ---");
+        attendanceService.displayAttendanceLog(course1);
+        
+        // Part 6: Interface-Driven Persistence with Storage
+        System.out.println("\n=== Saving Data to Files ===");
+        
+        // Save students and courses
+        FileStorageService.saveData(allStudents, "students.txt");
+        FileStorageService.saveData(allCourses, "courses.txt");
+        
+        // Save attendance data using AttendanceService
+        attendanceService.saveAttendanceData();
         
         System.out.println("\n=== Data Saved Successfully ===");
         System.out.println("Check the following files:");

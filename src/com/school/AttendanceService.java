@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 public class AttendanceService {
     private List<AttendanceRecord> attendanceLog;
     private FileStorageService storageService;
+    private RegistrationService registrationService;
 
     // Constructor
-    public AttendanceService(FileStorageService storageService) {
+    public AttendanceService(FileStorageService storageService, RegistrationService registrationService) {
         this.attendanceLog = new ArrayList<>();
         this.storageService = storageService;
+        this.registrationService = registrationService;
     }
 
     // Overloaded method 1: Mark attendance with Student and Course objects
@@ -20,11 +22,10 @@ public class AttendanceService {
         attendanceLog.add(record);
     }
 
-    // Overloaded method 2: Mark attendance with IDs and lookup lists
-    public void markAttendance(int studentId, int courseId, String status, 
-                              List<Student> allStudents, List<Course> allCourses) {
-        Student student = findStudentById(studentId, allStudents);
-        Course course = findCourseById(courseId, allCourses);
+    // Overloaded method 2: Mark attendance with IDs (delegates lookup to RegistrationService)
+    public void markAttendance(int studentId, int courseId, String status) {
+        Student student = registrationService.findStudentById(studentId);
+        Course course = registrationService.findCourseById(courseId);
         
         if (student != null && course != null) {
             markAttendance(student, course, status);
@@ -32,26 +33,6 @@ public class AttendanceService {
             System.out.println("⚠ Warning: Could not find student (ID: " + studentId + 
                              ") or course (ID: " + courseId + ") for attendance record.");
         }
-    }
-
-    // Helper method to find Student by ID
-    private Student findStudentById(int studentId, List<Student> allStudents) {
-        for (Student student : allStudents) {
-            if (student.getId() == studentId) {
-                return student;
-            }
-        }
-        return null;
-    }
-
-    // Helper method to find Course by ID
-    private Course findCourseById(int courseId, List<Course> allCourses) {
-        for (Course course : allCourses) {
-            if (course.getCourseId() == courseId) {
-                return course;
-            }
-        }
-        return null;
     }
 
     // Overloaded method 1: Display all attendance records

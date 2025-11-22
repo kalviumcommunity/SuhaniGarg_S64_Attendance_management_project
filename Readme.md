@@ -8,8 +8,7 @@ This is a Java project for Attendance System.
    ```bash
    javac src/com/school/main.java
 # run
-   java -cp src com.school.Main
-
+   java -cp src com.school.main
 
 ## Session 2: Core Domain Modelling
 - Defined `Student` class with `studentId`, `name`, `setDetails()`, and `displayDetails()` method.
@@ -21,7 +20,6 @@ This is a Java project for Attendance System.
 1. Navigate to the project root directory.
 2. Compile: `javac src/com/school/Student.java src/com/school/Course.java src/com/school/Main.java` (or `javac src/com/school/*.java`)
 3. Run: `java -cp src com.school.Main`
-
 
 
 ## Part 3: Constructor Initialization & Auto-ID Generation
@@ -37,7 +35,6 @@ This is a Java project for Attendance System.
 3. Run: `java -cp src com.school.Main`
 
 
-
 ## Part 4: Data Encapsulation & Attendance Recording Validation
 - Applied encapsulation to `Student` and `Course` classes by making fields `private` and adding public `getters`.
 - Introduced a new `AttendanceRecord` class with `private` fields, a constructor, and `getters` to store attendance data.
@@ -50,8 +47,6 @@ This is a Java project for Attendance System.
 2. Compile: `javac src/com/school/*.java` (or list individual files including `AttendanceRecord.java`)
 3. Run: `java -cp src com.school.Main`
 
-
-
 ## Part 5: Establishing Students, Teaching & Non-Teaching Staff hierarchy
 - Created a base class `Person.java` with common attributes (`id`, `name`), a universal auto-ID generator, and a `displayDetails()` method.
 - Modified `Student.java` to inherit from `Person`, using `super()` to call the parent constructor and overriding `displayDetails()` to add student-specific info (e.g., grade level).
@@ -59,27 +54,29 @@ This is a Java project for Attendance System.
 - Created `Staff.java` extending `Person`, adding a `role` attribute and its own `displayDetails()`.
 - Demonstrated creation and display of `Student`, `Teacher`, and `Staff` objects in `Main.java`.
 - Updated `AttendanceRecord` creation to use the inherited `getId()` method.
+- Added polymorphism demonstration showing how all Person objects can be stored in a Person array and each calls its own overridden `displayDetails()` method.
 
 ### How to Run
 1. Navigate to the project root directory.
-2. Compile:
-   ```bash
-   javac src/com/school/*.java
-
-
+2. Compile: `javac src/com/school/*.java`
+3. Run: `java -cp src com.school.main`
 
 
 ## Part 6: Interface-Driven Persistence with Storage
-- Added `Storable` interface with `toDataString()` method.
-- Implemented `Storable` in `Student`, `Course`, and `AttendanceRecord`.
-- Created `FileStorageService` to write data lists to `.txt` files.
-- Demonstrated usage in `Main.java`.
+- Defined a `Storable` interface with a `toDataString()` method.
+- Modified `Student`, `Course`, and `AttendanceRecord` classes to implement the `Storable` interface and provide their specific `toDataString()` implementations (CSV format).
+- Created a `FileStorageService` class with a `saveData(List<? extends Storable> items, String filename)` method to write `Storable` objects to a text file.
+- Utilized `try-with-resources` for safe file handling (`PrintWriter`, `FileWriter`).
+- Demonstrated in `Main.java` how to save lists of students, courses, and attendance records to separate files (`students.txt`, `courses.txt`, `attendance_log.txt`).
+- Discussed the flexibility provided by interfaces for handling different types of storable objects uniformly.
 
 ### How to Run
-1. Navigate to project root.
-2. Compile:
-   ```bash
-   javac src/com/school/*.java
+1. Navigate to the project root directory.
+2. Compile: `javac src/com/school/*.java`
+3. Run: `java -cp src com.school.main`
+4. Check the generated files: `students.txt`, `courses.txt`, `attendance_log.txt`.
+
+
 ## Part 7: Polymorphic Behaviour in Attendance and Displaying Reports
 - Modified `AttendanceRecord` to hold `Student` and `Course` objects instead of just their IDs, enhancing its object-oriented nature and how records are displayed. The `toDataString()` method still uses IDs for simpler file storage.
 - Created a `displaySchoolDirectory(List<Person> people)` method in `Main.java` to demonstrate polymorphism. This method iterates through a list of `Person` objects (containing `Student`, `Teacher`, `Staff` instances) and calls `person.displayDetails()`. The correct overridden method for each specific object type is executed at runtime.
@@ -91,3 +88,39 @@ This is a Java project for Attendance System.
 1. Navigate to the project root directory.
 2. Compile: `javac src/com/school/*.java`
 3. Run: `java -cp src com.school.Main`
+
+## Part 8: Overloaded Commands: Multiple Ways to Mark and Query Attendance
+- Created an `AttendanceService.java` class to encapsulate attendance logic and manage the list of `AttendanceRecord` objects.
+- Implemented overloaded `markAttendance` methods in `AttendanceService`:
+    - `markAttendance(Student student, Course course, String status)`
+    - `markAttendance(int studentId, int courseId, String status, List<Student> allStudents, List<Course> allCourses)` (performs lookups)
+- Implemented overloaded `displayAttendanceLog` methods in `AttendanceService`:
+    - `displayAttendanceLog()` (shows all records)
+    - `displayAttendanceLog(Student student)` (filters by student)
+    - `displayAttendanceLog(Course course)` (filters by course)
+- Utilized Java Streams for filtering records in the specific display methods.
+- `AttendanceService` now uses `FileStorageService` to save its `attendanceLog`.
+- Demonstrated the use of these overloaded methods in `Main.java`, showing how different method signatures allow for flexible ways to call the same conceptual operation.
+
+### How to Run
+1. Navigate to the project root directory.
+2. Compile: `javac src/com/school/*.java`
+3. Run: `java -cp src com.school.Main`
+4. Check `attendance_log.txt` for saved records.
+
+## Part 9: SOLID Service Layer: RegistrationService & AttendanceService Separation
+- Applied the Single Responsibility Principle (SRP) by creating dedicated service classes.
+- Created `RegistrationService.java` to handle the registration, management (lists, lookups), and saving of `Student`, `Teacher`, `Staff`, and `Course` entities.
+- Modified `Teacher.java` and `Staff.java` to implement `Storable` for file persistence.
+- Refactored `AttendanceService.java`:
+    - It now depends on `RegistrationService` for looking up students/courses by ID.
+    - Removed internal lookup helper methods, delegating this to `RegistrationService`.
+    - Its primary focus is now solely on managing attendance records.
+- Updated `Main.java` to act as an orchestrator, instantiating and using these services. Direct entity list management was removed from `Main`.
+- Demonstrated improved code organization and clearer separation of concerns.
+
+### How to Run
+1. Navigate to the project root directory.
+2. Compile: `javac src/com/school/*.java`
+3. Run: `java -cp src com.school.Main`
+4. Check for `students.txt`, `teachers.txt`, `staff.txt`, `courses.txt`, and `attendance_log.txt`.

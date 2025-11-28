@@ -36,6 +36,21 @@ public class RegistrationService {
         courses.add(course);
     }
 
+    // Create course with capacity
+    public Course createCourse(String courseName, int capacity) {
+        Course course = new Course(courseName, capacity);
+        courses.add(course);
+        return course;
+    }
+
+    // Enroll student in course with capacity checking
+    public boolean enrollStudentInCourse(Student student, Course course) {
+        if (course == null || student == null) {
+            return false;
+        }
+        return course.enrollStudent(student);
+    }
+
     // Lookup methods
     public Student findStudentById(int studentId) {
         for (Student student : students) {

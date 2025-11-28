@@ -27,18 +27,40 @@ public class main {
         registrationService.registerStaff(staff1);
         registrationService.registerStaff(staff2);
 
-        // Create and register courses
-        Course course1 = new Course("Mathematics");
-        Course course2 = new Course("Science");
-        registrationService.registerCourse(course1);
-        registrationService.registerCourse(course2);
+        // Part 10: Create courses with capacity
+        Course course1 = registrationService.createCourse("Mathematics", 2); // Capacity of 2
+        Course course2 = registrationService.createCourse("Science", 3); // Capacity of 3
 
         // Part 7: Polymorphic Behaviour - School Directory
         System.out.println("=== School Directory ===");
         displaySchoolDirectory(registrationService.getAllPeople());
 
-        // Display courses
-        System.out.println("\n=== Courses ===");
+        // Part 10: Capacity Management - Enroll students in courses
+        System.out.println("\n=== Part 10: Course Enrollment with Capacity Management ===");
+        
+        // Enroll students in courses
+        System.out.println("\n--- Enrolling Students in Mathematics Course (Capacity: 2) ---");
+        boolean enrolled1 = registrationService.enrollStudentInCourse(student1, course1);
+        System.out.println("Enrolled " + student1.getName() + ": " + (enrolled1 ? "Success" : "Failed"));
+        
+        boolean enrolled2 = registrationService.enrollStudentInCourse(student2, course1);
+        System.out.println("Enrolled " + student2.getName() + ": " + (enrolled2 ? "Success" : "Failed"));
+        
+        // Try to exceed capacity
+        Student student3 = new Student("Charlie", "Grade 10");
+        registrationService.registerStudent(student3);
+        boolean enrolled3 = registrationService.enrollStudentInCourse(student3, course1);
+        System.out.println("Enrolled " + student3.getName() + " (attempting to exceed capacity): " + 
+                          (enrolled3 ? "Success" : "Failed - Course is full"));
+        
+        System.out.println("\n--- Enrolling Students in Science Course (Capacity: 3) ---");
+        registrationService.enrollStudentInCourse(student1, course2);
+        registrationService.enrollStudentInCourse(student2, course2);
+        registrationService.enrollStudentInCourse(student3, course2);
+        System.out.println("Enrolled 3 students successfully");
+
+        // Display courses with enrollment information
+        System.out.println("\n=== Courses (with Capacity and Enrollment) ===");
         for (Course course : registrationService.getAllCourses()) {
             course.displayDetails();
         }
